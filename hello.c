@@ -3,10 +3,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-int main(int agrc,char *argv[]){
-	struct stat buf;
-	lstat(argv[1],&buf);
-	if(buf.st_mode & S_ISUID)
-		puts("suid");
+int main(void){
+	char *argv[3]={"ls","-l",NULL};
+	execvp(argv[0],argv);
 	return 0;
 }
