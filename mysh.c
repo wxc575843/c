@@ -54,7 +54,7 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	int len=strlen(input);
 	--len;
 	input[len]='\0';
-	for(int i=0;i<len;++i){
+	for(i=0;i<len;++i){
 		if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
 			for(j=len+1;j>i;--j){
 				input[j]=input[j-2];
@@ -86,14 +86,14 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 }
 
 void execute(int argc,char **argv,int redpos,int pipepos){
-	int isBackGround=strcmp(argv[argc-1],"&"),stat;
+	int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
 	int pid=fork();
 	switch(pid){
 		case -1:
 			fprintf(stderr,"fork error\n");
 			exit(1);
 		case 0:
-			for(int i=0;i<argc;++i){
+			for(i=0;i<argc;++i){
 				if(argv[i][0]=='$' && getenv(&argv[i][1]))
 					argv[i]=getenv(&argv[i][1]);
 			}
