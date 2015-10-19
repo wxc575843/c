@@ -12,7 +12,7 @@ char error_message[30] = "An error has occurred\n";
 void mypipe(int pipepos,int argc,char **argv){
 	int fd[2];
 	if(pipe(fd)<0){
-		write(STDOUT_FILENO,error_message,strlen(error_message));
+		write(STDERR_FILENO,error_message,strlen(error_message));
 		return;
 	}
 	int lastpos=pipepos-1;
@@ -20,7 +20,7 @@ void mypipe(int pipepos,int argc,char **argv){
 	int pid=fork();
 	switch(pid){
 		case -1:
-			write(STDOUT_FILENO,error_message,strlen(error_message));
+			write(STDERR_FILENO,error_message,strlen(error_message));
 			break;
 		case 0:
 			dup2(fd[1],STDOUT_FILENO);
@@ -134,7 +134,7 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 						close(STDOUT_FILENO);
 						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
 						if(fd==-1){
-							write(STDOUT_FILENO,error_message,strlen(error_message));
+							write(STDERR_FILENO,error_message,strlen(error_message));
 							exit(0);
 						}
 						argv[redpos]=NULL;
@@ -185,7 +185,7 @@ int main(int argc,char *argv[]){
 			if(open(argv[i],O_RDONLY)!=-1)
 				start(0);
 			else 
-				write(STDOUT_FILENO,error_message,strlen(error_message));
+				write(STDERR_FILENO,error_message,strlen(error_message));
 		}
 	}
 	else 
