@@ -30,7 +30,8 @@ void mypipe(int pipepos,int argc,char **argv){
 				mypipe(lastpos,pipepos,argv);
 			else{
 				argv[pipepos]=NULL;
-				execvp(argv[0],argv);
+				if(execvp(argv[0],argv)==-1)
+					write(STDERR_FILENO,error_message,strlen(error_message));
 			}
 			break;
 		default:
@@ -39,7 +40,8 @@ void mypipe(int pipepos,int argc,char **argv){
 			close(fd[0]);
 			close(fd[1]);
 			while(wait(NULL)>0);
-			execvp(argv[pipepos+1],&argv[pipepos+1]);
+			if(execvp(argv[pipepos+1],&argv[pipepos+1])==-1)
+				write(STDERR_FILENO,error_message,strlen(error_message));
 			break;
 	}	
 }
@@ -125,8 +127,10 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 				}
 			}
 			else{
-				if(!redpos)
-					execvp(argv[0],argv);
+				if(!redpos){
+					if(execvp(argv[0],argv)==-1)
+						write(STDERR_FILENO,error_message,strlen(error_message));
+				}
 				else{
 					if(argc-redpos!=2)
 						write(STDERR_FILENO, error_message, strlen(error_message));
@@ -138,7 +142,8 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 							exit(0);
 						}
 						argv[redpos]=NULL;
-						execvp(argv[0],argv);
+						if(execvp(argv[0],argv)==-1)
+							write(STDERR_FILENO,error_message,strlen(error_message));
 					}
 				}
 			}
