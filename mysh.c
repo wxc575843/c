@@ -9,7 +9,43 @@ char* homePath,curPath[513];
 char *newline="\n";
 char error_message[30] = "An error has occurred\n";
 
-int getargs(int *argc,char **argv,char *input,int *redpos,int flag){
+void mypipe(int pipepos,int argc,char **argv){
+	int fd[2];
+	if(pipe(fd)<0){
+		write(STDOUT_FILENO,error_message,strlen(error_message));
+		return;
+	}
+	int lastpos=pipepos-1;
+	while(lastpos>0 && strcmp(argv[lastpos],"|")) --lastpos;
+	int pid=fork();
+	switch(pid){
+		case -1:
+			write(STDOUT_FILENO,error_message,strlen(error_message));
+			break;
+		case 0:
+			dup2(fd[1],STDOUT_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			if(lastpos!=0){
+				mypipe(lastpos,pipepos,argv);
+			}
+			else{
+				argv[pipepos]=NULL;
+				execvp(argv[0],argv);
+			}
+			break;
+		default:
+			argv[argc]=NULL;
+			dup2(fd[0],STDIN_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			while(wait(NULL)>0);
+			execvp(argv[pipepos+1],&argv[pipepos+1]);
+			break;
+	}	
+}
+
+int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	char *in=NULL;
 	int i,j;
 	if(strchr(input,'\n')==NULL){
@@ -20,7 +56,7 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int flag){
 	--len;
 	input[len]='\0';
 	for(int i=0;i<len;++i){
-		if(input[i]=='<' || input[i]=='>' || input[i]=='&'){
+		if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
 			for(j=len+1;j>i;--j){
 				input[j]=input[j-2];
 			}
@@ -38,6 +74,8 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int flag){
 			break;
 		if((!strcmp(argv[i],">") || !strcmp(argv[i],"<")) && !*redpos)
 			*redpos=i;
+		if(!strcmp(argv[i],"|"))
+			*pipepos=i;
 		in=NULL;
 	}
 	if(i>MAXN-1){
@@ -45,13 +83,11 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int flag){
 		return 0;
 	}
 	*argc=i;
-	if(!flag)
-		write(STDOUT_FILENO,input,strlen(input));
 	return 1;
 }
 
-void execute(int argc,char **argv,int redpos){
-	int flag=strcmp(argv[argc-1],"&"),stat;
+void execute(int argc,char **argv,int redpos,int pipepos){
+	int isBackGround=strcmp(argv[argc-1],"&"),stat;
 	int pid=fork();
 	switch(pid){
 		case -1:
@@ -62,8 +98,12 @@ void execute(int argc,char **argv,int redpos){
 				if(argv[i][0]=='$' && getenv(&argv[i][1]))
 					argv[i]=getenv(&argv[i][1]);
 			}
-			if(!flag){
+			if(!isBackGround){
  				argv[--argc]=NULL;
+			}
+			if(pipepos){
+				mypipe(pipepos,argc,argv);
+				exit(0);
 			}
 			if(strcmp(argv[0],"wait")==0)
 				exit(0);
@@ -109,29 +149,31 @@ void execute(int argc,char **argv,int redpos){
 				while(wait(&stat)>0);
 				break;
 			}
-			else if(flag)
+			else if(isBackGround)
 				waitpid(pid,NULL,0);
 			break;
 	}
 }
 
+
+
 void start(int flag){
 	char *argv[MAXN];
 	char input[MAXN];
 	while(1){
-		int argc=0,redpos=0;
+		int argc=0,redpos=0,pipepos=0;
 		write(STDOUT_FILENO,"mysh >",6);
 		if(fgets(input,MAXN-1,stdin)==NULL)
 			break;
 		if(!flag)
 			write(STDOUT_FILENO,input,strlen(input));
-		if(getargs(&argc,argv,input,&redpos,flag) && argc>0){
+		if(getargs(&argc,argv,input,&redpos,&pipepos) && argc>0){
 			if(strcmp(argv[0],"exit")==0){
 				if(argc!=1)
 					write(STDERR_FILENO, error_message, strlen(error_message));
 				else break;
 			}
-			execute(argc,argv,redpos);
+			execute(argc,argv,redpos,pipepos);
 		}
 	}
 }

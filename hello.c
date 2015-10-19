@@ -1,25 +1,27 @@
 #include <stdio.h>  
 #include <unistd.h>
 #include <fcntl.h>
-int main(int argc,char *argv[])  
+#include <sys/wait.h>
+int main()  
 {  
-    char input[100];
-    // chdir("/c");
-    // if(argc >1){
-    //     fclose(STDIN_FILENO);
-    //     open(argv[1],O_RDONLY);
-    //     int cnt=0;
-    //     char * s;
-    //     while((s=fgets(input,100,stdin))!=NULL){
-    //         // if(input[0]==NULL)
-    //         //     break;
-    //         puts(s);
-    //         ++cnt;
-    //         if(cnt==2)
-    //             break;
-    //         // puts(input);
-    //     }
-    // }
-    while(fgets(input,100,stdin)!=NULL);
+    int fd[2];
+    pipe(fd);
+    char *argv[5]={"ls","-l",NULL,"wc",NULL};
+    int pid=fork();
+    switch(pid){
+        case 0:
+            dup2(fd[1],STDOUT_FILENO);
+            close(fd[0]);
+            close(fd[1]);
+            execvp(argv[0],argv);
+            break;
+        default:
+            dup2(fd[0],STDIN_FILENO);
+            close(fd[0]);
+            close(fd[1]);
+            while(wait(NULL)>0);
+            execvp(argv[3],&argv[3]);
+            break;
+    }
     return 0;
 }  
