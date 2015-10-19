@@ -1,25 +1,25 @@
-# a.out: hello.cpp
-# 	clang++ hello.cpp
-# r:
-# 	/programs/c/a.out
-# c:
-# 	rm -f a.out
+# mysh: mysh.c
+# 	gcc mysh.c -o mysh
+# run:
+# 	./mysh
+# clear:
+# 	rm -f mysh
 
-SRCS=hello.cpp
-TARG=a.out
-CC=clang++
+SRCS=mysh.c
+TARG=mysh
+CC=gcc
 OPTS=-Wall -O
 LIBS=
 
-OBJS=$(SRCS:.cpp=.o)
+OBJS=$(SRCS:.c=.o)
 $(TARG):$(OBJS)
 	$(CC) -o $(TARG) $(OBJS)
 
 %.o:%.c
 	$(CC) -c $< -o $@
 
-c:
+clear:
 	rm -f $(OBJS) $(TARG)
 r:
-	/programs/c/a.out
+	./mysh
 

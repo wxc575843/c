@@ -26,9 +26,8 @@ void mypipe(int pipepos,int argc,char **argv){
 			dup2(fd[1],STDOUT_FILENO);
 			close(fd[0]);
 			close(fd[1]);
-			if(lastpos!=0){
+			if(lastpos!=0)	
 				mypipe(lastpos,pipepos,argv);
-			}
 			else{
 				argv[pipepos]=NULL;
 				execvp(argv[0],argv);
@@ -155,14 +154,12 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 	}
 }
 
-
-
 void start(int flag){
 	char *argv[MAXN];
 	char input[MAXN];
 	while(1){
 		int argc=0,redpos=0,pipepos=0;
-		write(STDOUT_FILENO,"mysh >",6);
+		write(STDOUT_FILENO,"mysh > ",7);
 		if(fgets(input,MAXN-1,stdin)==NULL)
 			break;
 		if(!flag)

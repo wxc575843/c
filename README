@@ -1,0 +1,43 @@
+我的实现pipe思路：
+先由处理字符串函数记录最后一个管道符“｜”在argv[]中的坐标。
+考虑到会有多管道的情况，从右往左，采用递归往前的顺序。
+每一个管道符号左边的命令是右边命令的子进程。
+由pipe(fd[])函数建立起一组父子关系间的通信管道。
+由dup2(int fd,int fd2)将子进程的stdout替换成fd[1]和父进程的stdin替换成fd[0]
+
+程序段如下：（ mysh.c 中 12至45行 ）
+
+void mypipe(int pipepos,int argc,char **argv){
+	int fd[2];
+	if(pipe(fd)<0){
+		write(STDOUT_FILENO,error_message,strlen(error_message));
+		return;
+	}
+	int lastpos=pipepos-1;
+	while(lastpos>0 && strcmp(argv[lastpos],"|")) --lastpos;
+	int pid=fork();
+	switch(pid){
+		case -1:
+			write(STDOUT_FILENO,error_message,strlen(error_message));
+			break;
+		case 0:
+			dup2(fd[1],STDOUT_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			if(lastpos!=0)	
+				mypipe(lastpos,pipepos,argv);
+			else{
+				argv[pipepos]=NULL;
+				execvp(argv[0],argv);
+			}
+			break;
+		default:
+			argv[argc]=NULL;
+			dup2(fd[0],STDIN_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			while(wait(NULL)>0);
+			execvp(argv[pipepos+1],&argv[pipepos+1]);
+			break;
+	}	
+}
