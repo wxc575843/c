@@ -92,7 +92,7 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 	int pid=fork();
 	switch(pid){
 		case -1:
-			fprintf(stderr,"fork error\n");
+			write(STDERR_FILENO,error_message,strlen(error_message));
 			exit(1);
 		case 0:
 			for(i=0;i<argc;++i){
@@ -103,8 +103,21 @@ void execute(int argc,char **argv,int redpos,int pipepos){
  				argv[--argc]=NULL;
 			}
 			if(pipepos){
-				mypipe(pipepos,argc,argv);
-				exit(0);
+				if(redpos){
+					if(argc-redpos!=2)
+						write(STDERR_FILENO, error_message, strlen(error_message));
+					else{
+						close(STDOUT_FILENO);
+						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+						if(fd==-1){
+							write(STDERR_FILENO,error_message,strlen(error_message));
+							exit(0);
+						}
+						argv[redpos]=NULL;
+						mypipe(pipepos,argc,argv);
+						exit(0);
+					}
+				}
 			}
 			if(strcmp(argv[0],"wait")==0)
 				exit(0);
