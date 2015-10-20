@@ -58,9 +58,10 @@ void spfa(){
 		}
 	}
 }
+
 struct cmp{
 	bool operator()(const int &x,const int &y){
-		return dist[x]+point[x].length(point[TARGET])<dist[y]+point[y].length(point[TARGET]);
+		return dist[x]+point[x].length(point[TARGET])>dist[y]+point[y].length(point[TARGET]);
 	}
 };
 
@@ -73,8 +74,8 @@ void astar(){
 	while(!q.empty()){
 		int now=q.top();
 		q.pop();
-		// if(now==TARGET)
-		// 	break;
+		if(now==TARGET)
+			break;
 		for(int i=0;i<g[now].size();++i){
 			const Edge &e=edge[g[now][i]];
 			if(dist[e.to]>dist[now]+e.len){
@@ -88,6 +89,7 @@ void astar(){
 }
 
 int main(int argc,char *argv[]){
+	// read and save data
 	freopen("/users/fangpin/Documents/programs/c/Cities(1000).txt","r",stdin);
 	int a,b,c;
 	double x,y;	
@@ -108,6 +110,7 @@ int main(int argc,char *argv[]){
 	}
 	fclose(stdin);
 
+
 	int t1=clock();
  	spfa();
 	printf("spfa shortest length:\t%f\n",dist[TARGET]);
@@ -122,7 +125,8 @@ int main(int argc,char *argv[]){
 		printf("%d\t",path[i]+1);
 	printf("\n");
 	int t2=clock();
-	printf("Spfa costs %fs\n",1.0*(t2-t1)/CLOCKS_PER_SEC);
+	printf("Spfa costs %fs\n\n\n",1.0*(t2-t1)/CLOCKS_PER_SEC);
+
 
 	path.clear();
 	for(int i=0;i<1005;++i)
