@@ -1,2 +1,6 @@
 ls
-echo fangpin
+pwd
+cd
+echo lalala
+exit
+

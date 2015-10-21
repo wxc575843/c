@@ -49,13 +49,13 @@ void mypipe(int pipepos,int argc,char **argv){
 int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	char *in=NULL;
 	int i,j;
-	if(strchr(input,'\n')==NULL){
-		write(STDERR_FILENO, error_message, strlen(error_message));
-		return 0;
-	}
+	// if(strchr(input,'\n')==NULL){
+	// 	write(STDERR_FILENO, error_message, strlen(error_message));
+	// 	return 0;
+	// }
 	int len=strlen(input);
-	--len;
-	input[len]='\0';
+	// --len;
+	// input[len]='\0';
 	for(i=0;i<len;++i){
 		if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
 			for(j=len+1;j>i;--j){
@@ -175,36 +175,52 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 void start(int flag){
 	char *argv[MAXN];
 	char input[MAXN];
+	write(STDOUT_FILENO,"mysh > ",7);
+	int first=1;
 	while(1){
 		int argc=0,redpos=0,pipepos=0;
-		write(STDOUT_FILENO,"mysh > ",7);
-		if(fgets(input,MAXN-1,stdin)==NULL)
+		int pos=0;
+		while(pos<513 && read(STDIN_FILENO,&input[pos++],1) && input[pos-1]!='\n');
+		if(pos==1)
 			break;
-		if(!flag)
+		else if(pos==513){
+			write(STDERR_FILENO,error_message,strlen(error_message));
+			continue;
+		}
+		input[pos-1]='\0';
+		// puts(input);
+		if(!first){
+			write(STDOUT_FILENO,"mysh > ",7);
+		}
+		if(!flag){
 			write(STDOUT_FILENO,input,strlen(input));
+			write(STDOUT_FILENO,newline,strlen(newline));
+		}
 		if(getargs(&argc,argv,input,&redpos,&pipepos) && argc>0){
 			if(strcmp(argv[0],"exit")==0){
 				if(argc!=1)
 					write(STDERR_FILENO, error_message, strlen(error_message));
 				else break;
 			}
-			execute(argc,argv,redpos,pipepos);
+			else execute(argc,argv,redpos,pipepos);
 		}
+		first=0;
 	}
 }
 
 int main(int argc,char *argv[]){
 	homePath=getenv("HOME");
 	getcwd(curPath,MAXN-1);
-	int i;
+	int i,fd;
 	if(argc>1){
 		for(i=1;i<argc;++i){
-			close(STDIN_FILENO);
-			if(open(argv[i],O_RDONLY)!=-1)
-				start(0);
-			else 
+			if((fd=open(argv[i],O_RDONLY))==-1)
 				write(STDERR_FILENO,error_message,strlen(error_message));
-		}
+			else{
+				dup2(fd,STDIN_FILENO);
+				start(0);
+			}
+		}		
 	}
 	else 
 		start(1);
