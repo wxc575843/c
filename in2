@@ -1,0 +1,73 @@
+mysh > ls
+Cities(1000).txt
+Cities(1000)link.txt
+Cities(144).txt
+Cities(144)link.txt
+README
+a.out
+ai2.cpp
+bc53a.cpp
+bc53b.cpp
+bc54a.cpp
+bc54b.cpp
+bc54c.cpp
+bc54c1.cpp
+bc55a.cpp
+bc55b.cpp
+bc56a.cpp
+bc56b.cpp
+bc56c.cpp
+bc57a.cpp
+bc57b.cpp
+bc57c.cpp
+bc57c_1.cpp
+bc58a.cpp
+bc58b.cpp
+bc58c.cpp
+bc59a.cpp
+bc59b.cpp
+buffer.c
+checkFileMode.c
+copy.c
+dump.c
+eoj1224.cpp
+exec.c
+fastsort.c
+fork.c
+fork_test.c
+generate.c
+hdu1043.cpp
+hdu1536.cpp
+hdu1850.cpp
+hdu2147.cpp
+hdu5430.cpp
+hdu5496.cpp
+hdu5497.cpp
+hello.c
+hello.cpp
+in1
+in2
+ls.c
+main.cpp
+makefile
+mysh
+mysh.c
+mysh.o
+out
+out.c
+poj1077.cpp
+poj1077_1.cpp
+pwrite.c
+queen.cpp
+queen_by_bit.cpp
+readlink.c
+sort.h
+testc
+testt
+mysh > pwd
+/Users/fangpin/Documents/programs/c
+mysh > cd
+mysh > echo lalala
+lalala
+mysh > exit
+mysh > mysh > 

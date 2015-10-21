@@ -49,24 +49,16 @@ void mypipe(int pipepos,int argc,char **argv){
 int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	char *in=NULL;
 	int i,j;
-	// if(strchr(input,'\n')==NULL){
-	// 	write(STDERR_FILENO, error_message, strlen(error_message));
-	// 	return 0;
-	// }
 	int len=strlen(input);
-	// --len;
-	// input[len]='\0';
 	for(i=0;i<len;++i){
 		if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
-			for(j=len+1;j>i;--j){
+			for(j=len+2;j>i;--j)
 				input[j]=input[j-2];
-			}
 			input[i+1]=input[i];
 			input[i+2]=' ';
 			input[i]=' ';
 			++i;
 			len+=2;
-			input[len]=0;
 		}
 	}
 	in=input;
@@ -179,25 +171,25 @@ void start(int flag){
 	int first=1;
 	while(1){
 		int argc=0,redpos=0,pipepos=0;
-		int pos=0;
-		while(pos<513 && read(STDIN_FILENO,&input[pos++],1) && input[pos-1]!='\n');
-		if(pos==1)
+		int pos=0,rc;
+		while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n');
+		if(pos==1 && rc==0)
 			break;
 		else if(pos==513){
 			write(STDERR_FILENO,error_message,strlen(error_message));
 			continue;
 		}
-		input[pos-1]='\0';
-		// puts(input);
-		if(!first){
+		if(rc) --pos;
+		input[pos]='\0';
+		if(!first && !flag)
 			write(STDOUT_FILENO,"mysh > ",7);
-		}
 		if(!flag){
 			write(STDOUT_FILENO,input,strlen(input));
 			write(STDOUT_FILENO,newline,strlen(newline));
 		}
 		if(getargs(&argc,argv,input,&redpos,&pipepos) && argc>0){
 			if(strcmp(argv[0],"exit")==0){
+				// printf("argc=%d\n",argc);
 				if(argc!=1)
 					write(STDERR_FILENO, error_message, strlen(error_message));
 				else break;
@@ -205,6 +197,8 @@ void start(int flag){
 			else execute(argc,argv,redpos,pipepos);
 		}
 		first=0;
+		if(flag)
+			write(STDOUT_FILENO,"mysh > ",7);
 	}
 }
 
