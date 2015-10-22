@@ -120,6 +120,7 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 				}
 				write(STDOUT_FILENO,curPath,strlen(curPath));
 				write(STDOUT_FILENO,newline,strlen(newline));
+				exit(0);
 			}
 			else if(strcmp(argv[0],"cd")==0){
 				if(argc>1){
@@ -130,11 +131,14 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 					chdir(homePath);
 					getcwd(curPath,MAXN);
 				}
+				exit(0);
 			}
 			else{
 				if(!redpos){
-					if(execvp(argv[0],argv)==-1)
+					if(execvp(argv[0],argv)==-1){
 						write(STDERR_FILENO,error_message,strlen(error_message));
+						exit(0);
+					}
 				}
 				else{
 					if(argc-redpos!=2)
@@ -147,8 +151,10 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 							exit(0);
 						}
 						argv[redpos]=NULL;
-						if(execvp(argv[0],argv)==-1)
+						if(execvp(argv[0],argv)==-1){
 							write(STDERR_FILENO,error_message,strlen(error_message));
+							exit(0);
+						}
 					}
 				}
 			}
@@ -177,6 +183,7 @@ void start(int flag){
 			break;
 		else if(pos==513){
 			write(STDERR_FILENO,error_message,strlen(error_message));
+			first=0;
 			continue;
 		}
 		if(rc) --pos;
@@ -189,7 +196,6 @@ void start(int flag){
 		}
 		if(getargs(&argc,argv,input,&redpos,&pipepos) && argc>0){
 			if(strcmp(argv[0],"exit")==0){
-				// printf("argc=%d\n",argc);
 				if(argc!=1)
 					write(STDERR_FILENO, error_message, strlen(error_message));
 				else break;
