@@ -81,6 +81,8 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 
 void execute(int argc,char **argv,int redpos,int pipepos){
 	int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
+	if(!isBackGround)
+		argv[--argc]=NULL;
 	int pid=fork();
 	switch(pid){
 		case -1:
@@ -90,9 +92,6 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 			for(i=0;i<argc;++i){
 				if(argv[i][0]=='$' && getenv(&argv[i][1]))
 					argv[i]=getenv(&argv[i][1]);
-			}
-			if(!isBackGround){
- 				argv[--argc]=NULL;
 			}
 			if(pipepos){
 				if(redpos){
@@ -110,6 +109,8 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 						exit(0);
 					}
 				}
+				else
+					mypipe(pipepos,argc,argv);
 			}
 			if(strcmp(argv[0],"wait")==0)
 				exit(0);
