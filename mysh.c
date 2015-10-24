@@ -4,8 +4,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
-const int MAXN=550;
-char* homePath,curPath[513];
+const int MAXN=1000;
+char* homePath,curPath[MAXN];
 char *newline="\n";
 char error_message[30] = "An error has occurred\n";
 
@@ -83,6 +83,20 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 	int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
 	if(!isBackGround)
 		argv[--argc]=NULL;
+	if(strcmp(argv[0],"cd")==0){
+		if(argc>1){
+			if(chdir(argv[1])==-1){
+				write(STDERR_FILENO,error_message,strlen(error_message));
+				exit(1);
+			}
+			getcwd(curPath,MAXN);
+		}
+		else{
+			chdir(homePath);
+			getcwd(curPath,MAXN);
+		}
+		return;
+	}
 	int pid=fork();
 	switch(pid){
 		case -1:
@@ -111,6 +125,7 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 				}
 				else
 					mypipe(pipepos,argc,argv);
+				exit(1);
 			}
 			if(strcmp(argv[0],"wait")==0)
 				exit(0);
@@ -123,45 +138,36 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 				write(STDOUT_FILENO,newline,strlen(newline));
 				exit(0);
 			}
-			else if(strcmp(argv[0],"cd")==0){
-				if(argc>1){
-					chdir(argv[1]);
-					getcwd(curPath,MAXN);
+			else{
+				if(!redpos && execvp(argv[0],argv)==-1){
+					write(STDERR_FILENO,error_message,strlen(error_message));
+					exit(0);
 				}
 				else{
-					chdir(homePath);
-					getcwd(curPath,MAXN);
-				}
-				exit(0);
-			}
-			else{
-				if(!redpos){
-					if(execvp(argv[0],argv)==-1){
+					if(argc-redpos!=2){
 						write(STDERR_FILENO,error_message,strlen(error_message));
 						exit(0);
 					}
-				}
-				else{
-					if(argc-redpos!=2)
-						write(STDERR_FILENO, error_message, strlen(error_message));
-					else{
-						close(STDOUT_FILENO);
-						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
-						if(fd==-1){
-							write(STDERR_FILENO,error_message,strlen(error_message));
-							exit(0);
-						}
-						argv[redpos]=NULL;
-						if(execvp(argv[0],argv)==-1){
-							write(STDERR_FILENO,error_message,strlen(error_message));
-							exit(0);
-						}
+					close(STDOUT_FILENO);
+					int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+					if(fd==-1){
+						write(STDERR_FILENO,error_message,strlen(error_message));
+						exit(0);
+					}
+					argv[redpos]=NULL;
+					if(execvp(argv[0],argv)==-1){
+						write(STDERR_FILENO,error_message,strlen(error_message));
+						exit(0);
 					}
 				}
 			}
 			break;
 		default:
 			if(strcmp(argv[0],"wait")==0){
+				if(argc!=1){
+					write(STDERR_FILENO,error_message,strlen(error_message));
+					break;
+				}
 				while(wait(&stat)>0);
 				break;
 			}
@@ -174,23 +180,21 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 void start(int flag){
 	char *argv[MAXN];
 	char input[MAXN];
-	write(STDOUT_FILENO,"mysh > ",7);
-	int first=1;
 	while(1){
+		if(flag)
+			write(STDOUT_FILENO,"mysh > ",7);
 		int argc=0,redpos=0,pipepos=0;
 		int pos=0,rc;
-		while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n');
-		if(pos==1 && rc==0)
+		while(pos<MAXN-1 && (rc=read(STDIN_FILENO,&input[pos],1)) && input[pos]!='\n') ++pos;
+		input[pos]='\0';
+		if(pos==0 && rc==0)
 			break;
-		else if(pos==513){
+		else if(pos>512){
+			write(STDOUT_FILENO,input,strlen(input));
+			write(STDOUT_FILENO,newline,strlen(newline));
 			write(STDERR_FILENO,error_message,strlen(error_message));
-			first=0;
 			continue;
 		}
-		if(rc) --pos;
-		input[pos]='\0';
-		if(!first && !flag)
-			write(STDOUT_FILENO,"mysh > ",7);
 		if(!flag){
 			write(STDOUT_FILENO,input,strlen(input));
 			write(STDOUT_FILENO,newline,strlen(newline));
@@ -203,9 +207,6 @@ void start(int flag){
 			}
 			else execute(argc,argv,redpos,pipepos);
 		}
-		first=0;
-		if(flag)
-			write(STDOUT_FILENO,"mysh > ",7);
 	}
 }
 
