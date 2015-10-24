@@ -4,23 +4,13 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 int main(int argc,char *argv[]){
-	DIR *dp;
-	struct dirent *dirp;
-	if(argc!=2){
-		errno=ENOENT;
-		perror("wrong args");
-		// fprintf(stderr,"wrong args\n");
-		exit(1);
-	}
-	if((dp=opendir(argv[1]))==NULL){
-		fprintf(stderr,"wrong dir\n");
-		exit(1);
-	}
-	while((dirp=readdir(dp))!=NULL){
-		printf("%s\n",dirp->d_name);
-	}
-	closedir(dp);
+	char *path="/abx";
+	struct stat buf;
+	lstat(path,&buf);
+	if(S_ISDIR(buf.st_mode) || S_ISREG(buf.st_mode))
+		puts("yes");
 	return 0;
 }

@@ -83,94 +83,96 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 	int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
 	if(!isBackGround)
 		argv[--argc]=NULL;
-	int pid=fork();
-	switch(pid){
-		case -1:
-			write(STDERR_FILENO,error_message,strlen(error_message));
-			exit(1);
-		case 0:
-			for(i=0;i<argc;++i){
-				if(argv[i][0]=='$' && getenv(&argv[i][1]))
-					argv[i]=getenv(&argv[i][1]);
+	if(strcmp(argv[0],"cd")==0){
+		if(argc>1){
+			if(chdir(argv[1])==-1){
+				write(STDERR_FILENO,error_message,strlen(error_message));
+				return;
 			}
-			if(pipepos){
-				if(redpos){
-					if(argc-redpos!=2)
-						write(STDERR_FILENO, error_message, strlen(error_message));
-					else{
-						close(STDOUT_FILENO);
-						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
-						if(fd==-1){
-							write(STDERR_FILENO,error_message,strlen(error_message));
+			getcwd(curPath,MAXN);
+		}
+		else{
+			chdir(homePath);
+			getcwd(curPath,MAXN);
+		}
+		return;;
+	}
+	else{
+		int pid=fork();
+		switch(pid){
+			case -1:
+				write(STDERR_FILENO,error_message,strlen(error_message));
+				exit(1);
+			case 0:
+				for(i=0;i<argc;++i){
+					if(argv[i][0]=='$' && getenv(&argv[i][1]))
+						argv[i]=getenv(&argv[i][1]);
+				}
+				if(pipepos){
+					if(redpos){
+						if(argc-redpos!=2)
+							write(STDERR_FILENO, error_message, strlen(error_message));
+						else{
+							close(STDOUT_FILENO);
+							int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+							if(fd==-1){
+								write(STDERR_FILENO,error_message,strlen(error_message));
+								exit(0);
+							}
+							argv[redpos]=NULL;
+							mypipe(pipepos,argc,argv);
 							exit(0);
 						}
-						argv[redpos]=NULL;
+					}
+					else
 						mypipe(pipepos,argc,argv);
+				}
+				if(strcmp(argv[0],"wait")==0)
+					exit(0);
+				else if(strcmp(argv[0],"pwd")==0){
+					if(argc>1){
+						write(STDERR_FILENO, error_message, strlen(error_message));
 						exit(0);
 					}
-				}
-				else
-					mypipe(pipepos,argc,argv);
-			}
-			if(strcmp(argv[0],"wait")==0)
-				exit(0);
-			else if(strcmp(argv[0],"pwd")==0){
-				if(argc>1){
-					write(STDERR_FILENO, error_message, strlen(error_message));
+					write(STDOUT_FILENO,curPath,strlen(curPath));
+					write(STDOUT_FILENO,newline,strlen(newline));
 					exit(0);
 				}
-				write(STDOUT_FILENO,curPath,strlen(curPath));
-				write(STDOUT_FILENO,newline,strlen(newline));
-				exit(0);
-			}
-			else if(strcmp(argv[0],"cd")==0){
-				if(argc>1){
-					if(chdir(argv[1])==-1){
-						write(STDERR_FILENO,error_message,strlen(error_message));
-						break;
-					}
-					getcwd(curPath,MAXN);
-				}
 				else{
-					chdir(homePath);
-					getcwd(curPath,MAXN);
-				}
-				exit(0);
-			}
-			else{
-				if(!redpos){
-					if(execvp(argv[0],argv)==-1){
-						write(STDERR_FILENO,error_message,strlen(error_message));
-						exit(0);
-					}
-				}
-				else{
-					if(argc-redpos!=2)
-						write(STDERR_FILENO, error_message, strlen(error_message));
-					else{
-						close(STDOUT_FILENO);
-						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
-						if(fd==-1){
-							write(STDERR_FILENO,error_message,strlen(error_message));
-							exit(0);
-						}
-						argv[redpos]=NULL;
+					if(!redpos){
 						if(execvp(argv[0],argv)==-1){
 							write(STDERR_FILENO,error_message,strlen(error_message));
 							exit(0);
 						}
 					}
+					else{
+						if(argc-redpos!=2)
+							write(STDERR_FILENO, error_message, strlen(error_message));
+						else{
+							close(STDOUT_FILENO);
+							int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+							if(fd==-1){
+								write(STDERR_FILENO,error_message,strlen(error_message));
+								exit(0);
+							}
+							argv[redpos]=NULL;
+							if(execvp(argv[0],argv)==-1){
+								write(STDERR_FILENO,error_message,strlen(error_message));
+								exit(0);
+							}
+						}
+					}
 				}
-			}
-			break;
-		default:
-			if(strcmp(argv[0],"wait")==0){
-				while(wait(&stat)>0);
 				break;
-			}
-			else if(isBackGround)
-				waitpid(pid,NULL,0);
-			break;
+			default:
+				if(strcmp(argv[0],"wait")==0){
+					while(wait(&stat)>0);
+					break;
+				}
+				else if(isBackGround)
+					waitpid(pid,NULL,0);
+				break;
+		}
 	}
 }
 
