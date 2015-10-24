@@ -52,7 +52,7 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	int len=strlen(input);
 	for(i=0;i<len;++i){
 		if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
-			for(j=len+1;j>i;--j)
+			for(j=len+2;j>i;--j)
 				input[j]=input[j-2];
 			input[i+1]=input[i];
 			input[i+2]=' ';
@@ -61,7 +61,6 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 			len+=2;
 		}
 	}
-	printf("%s\n",input);
 	in=input;
 	for(i=0;i<MAXN-1;++i){
 		if((argv[i]=strtok(in," \t\n"))==NULL)
@@ -84,96 +83,91 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 	int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
 	if(!isBackGround)
 		argv[--argc]=NULL;
-	if(strcmp(argv[0],"cd")==0){
-		if(argc>1){
-			if(chdir(argv[1])==-1){
-				write(STDERR_FILENO,error_message,strlen(error_message));
-				return;
+	int pid=fork();
+	switch(pid){
+		case -1:
+			write(STDERR_FILENO,error_message,strlen(error_message));
+			exit(1);
+		case 0:
+			for(i=0;i<argc;++i){
+				if(argv[i][0]=='$' && getenv(&argv[i][1]))
+					argv[i]=getenv(&argv[i][1]);
 			}
-			getcwd(curPath,MAXN);
-		}
-		else{
-			chdir(homePath);
-			getcwd(curPath,MAXN);
-		}
-		return;
-	}
-	else{
-		int pid=fork();
-		switch(pid){
-			case -1:
-				write(STDERR_FILENO,error_message,strlen(error_message));
-				exit(1);
-			case 0:
-				for(i=0;i<argc;++i){
-					if(argv[i][0]=='$' && getenv(&argv[i][1]))
-						argv[i]=getenv(&argv[i][1]);
-				}
-				if(pipepos){
-					if(redpos){
-						if(argc-redpos!=2)
-							write(STDERR_FILENO, error_message, strlen(error_message));
-						else{
-							close(STDOUT_FILENO);
-							int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
-							if(fd==-1){
-								write(STDERR_FILENO,error_message,strlen(error_message));
-								exit(0);
-							}
-							argv[redpos]=NULL;
-							mypipe(pipepos,argc,argv);
+			if(pipepos){
+				if(redpos){
+					if(argc-redpos!=2)
+						write(STDERR_FILENO, error_message, strlen(error_message));
+					else{
+						close(STDOUT_FILENO);
+						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+						if(fd==-1){
+							write(STDERR_FILENO,error_message,strlen(error_message));
 							exit(0);
 						}
-					}
-					else
+						argv[redpos]=NULL;
 						mypipe(pipepos,argc,argv);
-				}
-				if(strcmp(argv[0],"wait")==0)
-					exit(0);
-				else if(strcmp(argv[0],"pwd")==0){
-					if(argc>1){
-						write(STDERR_FILENO, error_message, strlen(error_message));
 						exit(0);
 					}
-					write(STDOUT_FILENO,curPath,strlen(curPath));
-					write(STDOUT_FILENO,newline,strlen(newline));
+				}
+				else
+					mypipe(pipepos,argc,argv);
+			}
+			if(strcmp(argv[0],"wait")==0)
+				exit(0);
+			else if(strcmp(argv[0],"pwd")==0){
+				if(argc>1){
+					write(STDERR_FILENO, error_message, strlen(error_message));
 					exit(0);
 				}
+				write(STDOUT_FILENO,curPath,strlen(curPath));
+				write(STDOUT_FILENO,newline,strlen(newline));
+				exit(0);
+			}
+			else if(strcmp(argv[0],"cd")==0){
+				if(argc>1){
+					chdir(argv[1]);
+					getcwd(curPath,MAXN);
+				}
 				else{
-					if(!redpos){
+					chdir(homePath);
+					getcwd(curPath,MAXN);
+				}
+				exit(0);
+			}
+			else{
+				if(!redpos){
+					if(execvp(argv[0],argv)==-1){
+						write(STDERR_FILENO,error_message,strlen(error_message));
+						exit(0);
+					}
+				}
+				else{
+					if(argc-redpos!=2)
+						write(STDERR_FILENO, error_message, strlen(error_message));
+					else{
+						close(STDOUT_FILENO);
+						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+						if(fd==-1){
+							write(STDERR_FILENO,error_message,strlen(error_message));
+							exit(0);
+						}
+						argv[redpos]=NULL;
 						if(execvp(argv[0],argv)==-1){
 							write(STDERR_FILENO,error_message,strlen(error_message));
 							exit(0);
 						}
 					}
-					else{
-						if(argc-redpos!=2)
-							write(STDERR_FILENO, error_message, strlen(error_message));
-						else{
-							close(STDOUT_FILENO);
-							int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
-							if(fd==-1){
-								write(STDERR_FILENO,error_message,strlen(error_message));
-								exit(0);
-							}
-							argv[redpos]=NULL;
-							if(execvp(argv[0],argv)==-1){
-								write(STDERR_FILENO,error_message,strlen(error_message));
-								exit(0);
-							}
-						}
-					}
 				}
+			}
+			break;
+		default:
+			if(strcmp(argv[0],"wait")==0){
+				while(wait(&stat)>0);
 				break;
-			default:
-				if(strcmp(argv[0],"wait")==0){
-					while(wait(&stat)>0);
-					break;
-				}
-				else if(isBackGround)
-					waitpid(pid,NULL,0);
-				break;
-		}
+			}
+			else if(isBackGround)
+				waitpid(pid,NULL,0);
+			break;
 	}
 }
 
@@ -185,8 +179,7 @@ void start(int flag){
 	while(1){
 		int argc=0,redpos=0,pipepos=0;
 		int pos=0,rc;
-		while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n')
-			if(pos==513) --pos;
+		while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n');
 		if(pos==1 && rc==0)
 			break;
 		else if(pos==513){
