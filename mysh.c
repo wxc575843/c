@@ -52,7 +52,7 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	int len=strlen(input);
 	for(i=0;i<len;++i){
 		if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
-			for(j=len+2;j>i;--j)
+			for(j=len+1;j>i;--j)
 				input[j]=input[j-2];
 			input[i+1]=input[i];
 			input[i+2]=' ';
@@ -61,6 +61,7 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 			len+=2;
 		}
 	}
+	printf("%s\n",input);
 	in=input;
 	for(i=0;i<MAXN-1;++i){
 		if((argv[i]=strtok(in," \t\n"))==NULL)
@@ -95,7 +96,7 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 			chdir(homePath);
 			getcwd(curPath,MAXN);
 		}
-		return;;
+		return;
 	}
 	else{
 		int pid=fork();
