@@ -1,150 +1,229 @@
-#include <iostream>
-#include <cstdio>
-#include <string>
-#include <vector>
-#include <map>
-#include <stack>
-#include <queue>
-#include <cmath>
-#include <cstdlib>
-#include <cstring>
-#include <algorithm>
-#include <ctime>
-using namespace std;
-const int TARGET=999;
-const double MAXNLEN=1E30;
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+const int MAXN=550;
+char* homePath,curPath[513];
+char *newline="\n";
+char error_message[30] = "An error has occurred\n";
 
-struct Point{
-    double x,y;
-    Point(int xx=0,int yy=0):x(xx),y(yy){}
-    double length(const Point &r){
-        return sqrt((r.x-x)*(r.x-x)+(r.y-y)*(r.y-y));
+void mypipe(int pipepos,int argc,char **argv){
+    int fd[2];
+    if(pipe(fd)<0){
+        write(STDERR_FILENO,error_message,strlen(error_message));
+        return;
     }
-};
-
-struct Edge{
-    int to;
-    double len;
-    Edge(int b=0,double c=0.0):to(b),len(c){}
-};
-
-vector<int> g[1005];
-vector<Point> point;
-vector<Edge> edge;
-double dist[1005];
-int pre[1005];
-
-void spfa(vector<int> *g,const vector<Point>& point,const vector<Edge>& edge,double *dist,int *pre){
-    bool vis[1005];
-    memset(vis,false,sizeof(vis));
-    vis[0]=true;
-    queue<int> q;
-    q.push(0);
-    while(!q.empty()){
-        int now=q.front();
-        vis[now]=false;
-        q.pop();
-        for(int i=0;i<g[now].size();++i){
-            const Edge &e=edge[g[now][i]];
-            if(dist[e.to]>dist[now]+e.len){
-                dist[e.to]=dist[now]+e.len;
-                pre[e.to]=now;
-                if(!vis[e.to]){
-                    vis[e.to]=true;
-                    q.push(e.to);
-                    
-                }
+    int lastpos=pipepos-1;
+    while(lastpos>0 && strcmp(argv[lastpos],"|")) --lastpos;
+    int pid=fork();
+    switch(pid){
+        case -1:
+            write(STDERR_FILENO,error_message,strlen(error_message));
+            break;
+        case 0:
+            dup2(fd[1],STDOUT_FILENO);
+            close(fd[0]);
+            close(fd[1]);
+            if(lastpos!=0)
+                mypipe(lastpos,pipepos,argv);
+            else{
+                argv[pipepos]=NULL;
+                if(execvp(argv[0],argv)==-1)
+                    write(STDERR_FILENO,error_message,strlen(error_message));
             }
-        }
+            break;
+        default:
+            argv[argc]=NULL;
+            dup2(fd[0],STDIN_FILENO);
+            close(fd[0]);
+            close(fd[1]);
+            while(wait(NULL)>0);
+            if(execvp(argv[pipepos+1],&argv[pipepos+1])==-1)
+                write(STDERR_FILENO,error_message,strlen(error_message));
+            break;
     }
 }
-struct cmp{
-    bool operator()(const int &x,const int &y){
-        return dist[x]+point[x].length(point[TARGET])<dist[y]+point[y].length(point[TARGET]);
-    }
-};
 
-void astar(){
-    bool vis[1005];
-    memset(vis,false,sizeof(vis));
-    vis[0]=true;
-    priority_queue<int,vector<int>,cmp> q;
-    q.push(0);
-    while(!q.empty()){
-        int now=q.top();
-        q.pop();
-        if(now==TARGET)
+int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
+    char *in=NULL;
+    int i,j;
+    int len=strlen(input);
+    for(i=0;i<len;++i){
+        if(input[i]=='<' || input[i]=='>' || input[i]=='&' || input[i]=='|'){
+            for(j=len+2;j>i;--j)
+                input[j]=input[j-2];
+            input[i+1]=input[i];
+            input[i+2]=' ';
+            input[i]=' ';
+            ++i;
+            len+=2;
+        }
+    }
+    in=input;
+    for(i=0;i<MAXN-1;++i){
+        if((argv[i]=strtok(in," \t\n"))==NULL)
             break;
-        for(int i=0;i<g[now].size();++i){
-            Edge &e=edge[g[now][i]];
-            if(dist[e.to]>dist[now]+e.len){
-                dist[e.to]=dist[now]+e.len;
-                pre[e.to]=now;
-                // if(!vis[e.to])
-                {
-                    vis[e.to]=true;
-                    q.push(e.to);
+        if((!strcmp(argv[i],">") || !strcmp(argv[i],"<")) && !*redpos)
+            *redpos=i;
+        if(!strcmp(argv[i],"|"))
+            *pipepos=i;
+        in=NULL;
+    }
+    if(i>MAXN-1){
+        write(STDERR_FILENO, error_message, strlen(error_message));
+        return 0;
+    }
+    *argc=i;
+    return 1;
+}
+
+void execute(int argc,char **argv,int redpos,int pipepos){
+    int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
+    if(!isBackGround)
+        argv[--argc]=NULL;
+    int pid=fork();
+    switch(pid){
+        case -1:
+            write(STDERR_FILENO,error_message,strlen(error_message));
+            exit(1);
+        case 0:
+            for(i=0;i<argc;++i){
+                if(argv[i][0]=='$' && getenv(&argv[i][1]))
+                    argv[i]=getenv(&argv[i][1]);
+            }
+            if(pipepos){
+                if(redpos){
+                    if(argc-redpos!=2)
+                        write(STDERR_FILENO, error_message, strlen(error_message));
+                    else{
+                        close(STDOUT_FILENO);
+                        int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+                        if(fd==-1){
+                            write(STDERR_FILENO,error_message,strlen(error_message));
+                            exit(0);
+                        }
+                        argv[redpos]=NULL;
+                        mypipe(pipepos,argc,argv);
+                        exit(0);
+                    }
+                }
+                else
+                    mypipe(pipepos,argc,argv);
+            }
+            if(strcmp(argv[0],"wait")==0)
+                exit(0);
+            else if(strcmp(argv[0],"pwd")==0){
+                if(argc>1){
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                    exit(0);
+                }
+                write(STDOUT_FILENO,curPath,strlen(curPath));
+                write(STDOUT_FILENO,newline,strlen(newline));
+                exit(0);
+            }
+            else if(strcmp(argv[0],"cd")==0){
+                if(argc>1){
+                    chdir(argv[1]);
+                    getcwd(curPath,MAXN);
+                }
+                else{
+                    chdir(homePath);
+                    getcwd(curPath,MAXN);
+                }
+                exit(0);
+            }
+            else{
+                if(!redpos){
+                    if(execvp(argv[0],argv)==-1){
+                        write(STDERR_FILENO,error_message,strlen(error_message));
+                        exit(0);
+                    }
+                }
+                else{
+                    if(argc-redpos!=2)
+                        write(STDERR_FILENO, error_message, strlen(error_message));
+                    else{
+                        close(STDOUT_FILENO);
+                        int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
+                        if(fd==-1){
+                            write(STDERR_FILENO,error_message,strlen(error_message));
+                            exit(0);
+                        }
+                        argv[redpos]=NULL;
+                        if(execvp(argv[0],argv)==-1){
+                            write(STDERR_FILENO,error_message,strlen(error_message));
+                            exit(0);
+                        }
+                    }
                 }
             }
+            break;
+        default:
+            if(strcmp(argv[0],"wait")==0){
+                while(wait(&stat)>0);
+                break;
+            }
+            else if(isBackGround)
+                waitpid(pid,NULL,0);
+            break;
+    }
+}
+
+void start(int flag){
+    char *argv[MAXN];
+    char input[MAXN];
+    write(STDOUT_FILENO,"mysh > ",7);
+    int first=1;
+    while(1){
+        int argc=0,redpos=0,pipepos=0;
+        int pos=0,rc;
+        while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n');
+        if(pos==1 && rc==0)
+            break;
+        else if(pos==513){
+            write(STDERR_FILENO,error_message,strlen(error_message));
+            first=0;
+            continue;
         }
+        if(rc) --pos;
+        input[pos]='\0';
+        if(!first && !flag)
+            write(STDOUT_FILENO,"mysh > ",7);
+        if(!flag){
+            write(STDOUT_FILENO,input,strlen(input));
+            write(STDOUT_FILENO,newline,strlen(newline));
+        }
+        if(getargs(&argc,argv,input,&redpos,&pipepos) && argc>0){
+            if(strcmp(argv[0],"exit")==0){
+                if(argc!=1)
+                    write(STDERR_FILENO, error_message, strlen(error_message));
+                else break;
+            }
+            else execute(argc,argv,redpos,pipepos);
+        }
+        first=0;
+        if(flag)
+            write(STDOUT_FILENO,"mysh > ",7);
     }
 }
 
 int main(int argc,char *argv[]){
-    freopen("/users/fangpin/Documents/programs/c/Cities(144).txt","r",stdin);
-    int a,b,c;
-    double x,y;
-    for(int i=0;i<1005;++i)
-        dist[i]=MAXNLEN;
-    dist[0]=0.0;
-    memset(pre,-1,sizeof(pre));
-    while(~scanf("%d%lf%lf",&a,&x,&y)){
-        point.push_back(Point(x,y));
+    homePath=getenv("HOME");
+    getcwd(curPath,MAXN-1);
+    int i,fd;
+    if(argc>1){
+        for(i=1;i<argc;++i){
+            if((fd=open(argv[i],O_RDONLY))==-1)
+                write(STDERR_FILENO,error_message,strlen(error_message));
+            else{
+                dup2(fd,STDIN_FILENO);
+                start(0);
+            }
+        }		
     }
-    fclose(stdin);
-    freopen("/users/fangpin/Documents/programs/c/Cities(144)link.txt","r",stdin);
-    while(~scanf("%d%d",&a,&b)){
-        --a;--b;
-        edge.push_back(Edge(b,point[a].length(point[b])));
-        g[a].push_back(edge.size()-1);
-        edge.push_back(Edge(a,point[a].length(point[b])));
-        g[b].push_back(edge.size()-1);
-    }
-    fclose(stdin);
-    
-    int t1=clock();
-    spfa(g,point,edge,dist,pre);
-    printf("spfa shortest length:\t%f\n",dist[TARGET]);
-    vector<int> path;
-    int target=TARGET;
-    while(pre[target]!=-1){
-        path.push_back(target);
-        target=pre[target];
-    }
-    path.push_back(0);
-    for(int i=path.size()-1;i>=0;--i)
-        printf("%d\t",path[i]+1);
-    printf("\n");
-    int t2=clock();
-    printf("Spfa costs %dms\n",t2-t1);
-    
-    path.clear();
-    for(int i=0;i<1005;++i)
-        dist[i]=MAXNLEN;
-    dist[0]=0.0;
-    memset(pre,-1,sizeof(pre));
-    t1=clock();
-    astar();
-    printf("Astar shortest length:\t%f\n",dist[TARGET]);
-    while(pre[target]!=-1){
-        path.push_back(target);
-        target=pre[target];
-    }
-    path.push_back(0);
-    for(int i=path.size()-1;i>=0;--i)
-        printf("%d\t",path[i]+1);
-    printf("\n");
-    t2=clock();
-    printf("A* costs %dms\n",t2-t1);
+    else 
+        start(1);
     return 0;
 }

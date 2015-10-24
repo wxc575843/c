@@ -9,43 +9,6 @@ char* homePath,curPath[513];
 char *newline="\n";
 char error_message[30] = "An error has occurred\n";
 
-void mypipe(int pipepos,int argc,char **argv){
-	int fd[2];
-	if(pipe(fd)<0){
-		write(STDERR_FILENO,error_message,strlen(error_message));
-		return;
-	}
-	int lastpos=pipepos-1;
-	while(lastpos>0 && strcmp(argv[lastpos],"|")) --lastpos;
-	int pid=fork();
-	switch(pid){
-		case -1:
-			write(STDERR_FILENO,error_message,strlen(error_message));
-			break;
-		case 0:
-			dup2(fd[1],STDOUT_FILENO);
-			close(fd[0]);
-			close(fd[1]);
-			if(lastpos!=0)	
-				mypipe(lastpos,pipepos,argv);
-			else{
-				argv[pipepos]=NULL;
-				if(execvp(argv[0],argv)==-1)
-					write(STDERR_FILENO,error_message,strlen(error_message));
-			}
-			break;
-		default:
-			argv[argc]=NULL;
-			dup2(fd[0],STDIN_FILENO);
-			close(fd[0]);
-			close(fd[1]);
-			while(wait(NULL)>0);
-			if(execvp(argv[pipepos+1],&argv[pipepos+1])==-1)
-				write(STDERR_FILENO,error_message,strlen(error_message));
-			break;
-	}	
-}
-
 int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	char *in=NULL;
 	int i,j;
@@ -79,7 +42,7 @@ int getargs(int *argc,char **argv,char *input,int *redpos,int *pipepos){
 	return 1;
 }
 
-void execute(int argc,char **argv,int redpos,int pipepos){
+void execute(int argc,char **argv,int redpos){
 	int isBackGround=strcmp(argv[argc-1],"&"),stat,i;
 	if(!isBackGround)
 		argv[--argc]=NULL;
@@ -92,25 +55,6 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 			for(i=0;i<argc;++i){
 				if(argv[i][0]=='$' && getenv(&argv[i][1]))
 					argv[i]=getenv(&argv[i][1]);
-			}
-			if(pipepos){
-				if(redpos){
-					if(argc-redpos!=2)
-						write(STDERR_FILENO, error_message, strlen(error_message));
-					else{
-						close(STDOUT_FILENO);
-						int fd=open(argv[redpos+1],O_CREAT|O_TRUNC|O_WRONLY,(S_IRWXU^S_IXUSR)|S_IRGRP|S_IROTH);
-						if(fd==-1){
-							write(STDERR_FILENO,error_message,strlen(error_message));
-							exit(0);
-						}
-						argv[redpos]=NULL;
-						mypipe(pipepos,argc,argv);
-						exit(0);
-					}
-				}
-				else
-					mypipe(pipepos,argc,argv);
 			}
 			if(strcmp(argv[0],"wait")==0)
 				exit(0);
@@ -125,10 +69,7 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 			}
 			else if(strcmp(argv[0],"cd")==0){
 				if(argc>1){
-					if(chdir(argv[1])==-1){
-						write(STDERR_FILENO,error_message,strlen(error_message));
-						break;
-					}
+					chdir(argv[1]);
 					getcwd(curPath,MAXN);
 				}
 				else{
@@ -174,6 +115,60 @@ void execute(int argc,char **argv,int redpos,int pipepos){
 	}
 }
 
+void mypipe(int pipepos,int argc,char **argv){
+	int fd[2];
+	if(pipe(fd)<0){
+		write(STDERR_FILENO,error_message,strlen(error_message));
+		return;
+	}
+	int lastpos=pipepos-1,redpos;
+	while(lastpos>0 && strcmp(argv[lastpos],"|")) --lastpos;
+	int pid=fork();
+	
+	switch(pid){
+		case -1:
+			write(STDERR_FILENO,error_message,strlen(error_message));
+			break;
+		case 0:
+			dup2(fd[1],STDOUT_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			// if(lastpos!=0)	
+			// 	mypipe(lastpos,pipepos,argv);
+			// else
+			{
+				argv[pipepos]=NULL;
+				// if(execvp(argv[0],argv)==-1)
+				// 	write(STDERR_FILENO,error_message,strlen(error_message));
+				redpos=0;
+				for(int i=pipepos;i<argc;++i)
+					if(!strcmp(argv[i],"<") || !strcmp(argv[i],">"))
+						redpos=i;
+				for(int i=0;i<=pipepos;++i)
+					printf("%s\n",argv[i]);
+				execute(pipepos,argv,redpos);
+			}
+			break;
+		default:
+			argv[argc]=NULL;
+			dup2(fd[0],STDIN_FILENO);
+			close(fd[0]);
+			close(fd[1]);
+			// while(wait(NULL)>0);
+			// if(execvp(argv[pipepos+1],&argv[pipepos+1])==-1)
+			// 	write(STDERR_FILENO,error_message,strlen(error_message));
+			int redpos=0;
+			for(int i=pipepos;i<argc;++i)
+				if(!strcmp(argv[i],"<") || !strcmp(argv[i],">"))
+					redpos=i;
+
+			for(int i=pipepos+1;i<=argc;++i)
+				printf("%s\n",argv[i]);
+			execute(argc-pipepos,&argv[pipepos+1],redpos);
+			break;
+	}	
+}
+
 void start(int flag){
 	char *argv[MAXN];
 	char input[MAXN];
@@ -182,8 +177,7 @@ void start(int flag){
 	while(1){
 		int argc=0,redpos=0,pipepos=0;
 		int pos=0,rc;
-		while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n')
-			if(pos==513) --pos;
+		while(pos<513 && (rc=read(STDIN_FILENO,&input[pos++],1)) && input[pos-1]!='\n');
 		if(pos==1 && rc==0)
 			break;
 		else if(pos==513){
@@ -205,7 +199,9 @@ void start(int flag){
 					write(STDERR_FILENO, error_message, strlen(error_message));
 				else break;
 			}
-			else execute(argc,argv,redpos,pipepos);
+			else if(pipepos)
+				mypipe(pipepos,argc,argv);
+			else execute(argc,argv,redpos);
 		}
 		first=0;
 		if(flag)
