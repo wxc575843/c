@@ -1,0 +1,950 @@
+An error has occurred
+An error has occurred
+An error has occurred
+An error has occurred
+An error has occurred
+An error has occurred
+/bin/ls: cannot access /bogus: No such file or directory
+An error has occurred
+An error has occurred
+cat: 1.out: No such file or directory
+An error has occurred
+1.out  & 
+wait
+/bin/echo now
+wait
+mysh > /bin/echo later
+later
+mysh > cd /bogus
+mysh > exit foo
+mysh > /bogus
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+mysh > pwd /u
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+mysh > /bin/ls > /bogus
+mysh > /bin/ls > 1.out 2.out
+mysh > uname
+Linux
+mysh > wait foo
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+wait foo
+mysh > /bin/uname
+Linux
+mysh > cd
+mysh > ls
+a.out
+canopy
+Canopy
+Desktop
+Documents
+Downloads
+examples.desktop
+Music
+mysh.c
+Pictures
+Public
+Templates
+Videos
+mysh > /bin/ls /bogus
+mysh > uname
+Linux
+mysh > exit
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+wait foo
+/bin/uname
+cd
+ls
+/bin/ls /bogus
+uname
+exit
+mysh > uname
+Linux
+mysh > uname
+Linux
+mysh > /bin/echo
+
+mysh > /bin/uname
+Linux
+mysh > /bin/ls /bin/
+bash
+bunzip2
+busybox
+bzcat
+bzcmp
+bzdiff
+bzegrep
+bzexe
+bzfgrep
+bzgrep
+bzip2
+bzip2recover
+bzless
+bzmore
+cat
+chacl
+chgrp
+chmod
+chown
+chvt
+cp
+cpio
+dash
+date
+dbus-cleanup-sockets
+dbus-daemon
+dbus-uuidgen
+dd
+df
+dir
+dmesg
+dnsdomainname
+domainname
+dumpkeys
+echo
+ed
+egrep
+false
+fgconsole
+fgrep
+findmnt
+fuser
+fusermount
+getfacl
+grep
+gunzip
+gzexe
+gzip
+hostname
+init-checkconf
+initctl2dot
+ip
+kbd_mode
+kill
+less
+lessecho
+lessfile
+lesskey
+lesspipe
+ln
+loadkeys
+login
+lowntfs-3g
+ls
+lsblk
+lsmod
+mkdir
+mknod
+mktemp
+more
+mount
+mountpoint
+mt
+mt-gnu
+mv
+nano
+nc
+nc.openbsd
+netcat
+netstat
+nisdomainname
+ntfs-3g
+ntfs-3g.probe
+ntfs-3g.secaudit
+ntfs-3g.usermap
+ntfscat
+ntfsck
+ntfscluster
+ntfscmp
+ntfsdecrypt
+ntfsdump_logfile
+ntfsfix
+ntfsinfo
+ntfsls
+ntfsmftalloc
+ntfsmove
+ntfstruncate
+ntfswipe
+open
+openvt
+pidof
+ping
+ping6
+plymouth
+plymouth-upstart-bridge
+ps
+pwd
+rbash
+readlink
+rm
+rmdir
+rnano
+running-in-container
+run-parts
+sed
+setfacl
+setfont
+setupcon
+sh
+sh.distrib
+sleep
+ss
+static-sh
+stty
+su
+sync
+tailf
+tar
+tempfile
+touch
+true
+ulockmgr_server
+umount
+uname
+uncompress
+unicode_start
+vdir
+vmmouse_detect
+which
+whiptail
+ypdomainname
+zcat
+zcmp
+zdiff
+zegrep
+zfgrep
+zforce
+zgrep
+zless
+zmore
+znew
+mysh > /bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+total 8.5M
+1835187 -rwxr-xr-x 1 root 4.9K Feb  9  2012 "znew"
+1835186 -rwxr-xr-x 1 root 2.5K Feb  9  2012 "zmore"
+1835185 -rwxr-xr-x 1 root 1.8K Feb  9  2012 "zless"
+1835184 -rwxr-xr-x 1 root 5.9K Feb  9  2012 "zgrep"
+1835183 -rwxr-xr-x 1 root 2.1K Feb  9  2012 "zforce"
+1835182 -rwxr-xr-x 1 root  121 Feb  9  2012 "zfgrep"
+1835181 -rwxr-xr-x 1 root  121 Feb  9  2012 "zegrep"
+1835180 -rwxr-xr-x 1 root 4.5K Feb  9  2012 "zdiff"
+1835179 -rwxr-xr-x 1 root 1.7K Feb  9  2012 "zcmp"
+1835178 -rwxr-xr-x 1 root 1.9K Feb  9  2012 "zcat"
+1835177 -rwxr-xr-x 1 root  14K May 27  2011 "ypdomainname"
+1835176 -rwxr-xr-x 1 root  22K Feb 10  2012 "whiptail"
+1835175 -rwxr-xr-x 1 root  946 Mar 30  2012 "which"
+1835174 -rwxr-xr-x 1 root 5.4K Jun  4  2013 "vmmouse_detect"
+1835173 -rwxr-xr-x 1 root 103K Nov 20  2012 "vdir"
+1835170 -rwxr-xr-x 1 root 2.7K Apr  1  2012 "unicode_start"
+1835169 -rwxr-xr-x 1 root 2.2K Feb  9  2012 "uncompress"
+1835168 -rwxr-xr-x 1 root  26K Nov 20  2012 "uname"
+1835167 -rwsr-xr-x 1 root  67K Mar 30  2012 "umount"
+1835166 -rwxr-xr-x 1 root 9.6K Mar  2  2012 "ulockmgr_server"
+1835165 -rwxr-xr-x 1 root  22K Nov 20  2012 "true"
+1835164 -rwxr-xr-x 1 root  54K Nov 20  2012 "touch"
+1835163 -rwxr-xr-x 1 root 9.4K Mar 30  2012 "tempfile"
+1835162 -rwxr-xr-x 1 root 299K Mar 31  2012 "tar"
+1835161 -rwxr-xr-x 1 root  14K Mar 30  2012 "tailf"
+1835159 -rwxr-xr-x 1 root  22K Nov 20  2012 "sync"
+1835158 -rwsr-xr-x 1 root  31K Sep 13  2012 "su"
+1835157 -rwxr-xr-x 1 root  58K Nov 20  2012 "stty"
+1835156 lrwxrwxrwx 1 root    7 Jun 16 16:27 "static-sh" -> "busybox"
+1835155 -rwxr-xr-x 1 root  70K Apr 10  2012 "ss"
+1835154 -rwxr-xr-x 1 root  26K Nov 20  2012 "sleep"
+1835153 lrwxrwxrwx 1 root    4 Jun 16 16:27 "sh.distrib" -> "dash"
+1835152 lrwxrwxrwx 1 root    4 Jun 16 16:27 "sh" -> "dash"
+1835151 -rwxr-xr-x 1 root  12K Apr 20  2012 "setupcon"
+1835150 -rwxr-xr-x 1 root  38K Apr  1  2012 "setfont"
+1835149 -rwxr-xr-x 1 root  31K Dec 18  2011 "setfacl"
+1835146 -rwxr-xr-x 1 root  59K May  1  2011 "sed"
+1835143 -rwxr-xr-x 1 root  14K Mar 30  2012 "run-parts"
+1835144 -rwxr-xr-x 1 root  254 Jan 19  2013 "running-in-container"
+1835142 lrwxrwxrwx 1 root    4 Jun 16 16:27 "rnano" -> "nano"
+1835141 -rwxr-xr-x 1 root  34K Nov 20  2012 "rmdir"
+1835140 -rwxr-xr-x 1 root  54K Nov 20  2012 "rm"
+1835138 -rwxr-xr-x 1 root  34K Nov 20  2012 "readlink"
+1835137 lrwxrwxrwx 1 root    4 Jun 16 16:27 "rbash" -> "bash"
+1835136 -rwxr-xr-x 1 root  26K Nov 20  2012 "pwd"
+1835135 -rwxr-xr-x 1 root  86K Dec 13  2011 "ps"
+1835133 -rwxr-xr-x 1 root  30K May 17  2013 "plymouth-upstart-bridge"
+1835132 -rwxr-xr-x 1 root  34K May 17  2013 "plymouth"
+1835131 -rwsr-xr-x 1 root  39K Nov  8  2011 "ping6"
+1835130 -rwsr-xr-x 1 root  34K Nov  8  2011 "ping"
+1835129 lrwxrwxrwx 1 root   14 Jun 16 16:27 "pidof" -> "/sbin/killall5"
+1835121 -rwxr-xr-x 1 root  14K Apr  1  2012 "openvt"
+1835120 lrwxrwxrwx 1 root    6 Jun 16 16:27 "open" -> "openvt"
+1835119 -rwxr-xr-x 1 root  42K Sep 11  2012 "ntfswipe"
+1835118 -rwxr-xr-x 1 root  34K Sep 11  2012 "ntfstruncate"
+1835117 -rwxr-xr-x 1 root  30K Sep 11  2012 "ntfsmove"
+1835116 -rwxr-xr-x 1 root  26K Sep 11  2012 "ntfsmftalloc"
+1835115 -rwxr-xr-x 1 root  31K Sep 11  2012 "ntfsls"
+1835114 -rwxr-xr-x 1 root  58K Sep 11  2012 "ntfsinfo"
+1835113 -rwxr-xr-x 1 root  42K Sep 11  2012 "ntfsfix"
+1835112 -rwxr-xr-x 1 root  22K Sep 11  2012 "ntfsdump_logfile"
+1835111 -rwxr-xr-x 1 root  42K Sep 11  2012 "ntfsdecrypt"
+1835110 -rwxr-xr-x 1 root  34K Sep 11  2012 "ntfscmp"
+1835109 -rwxr-xr-x 1 root  34K Sep 11  2012 "ntfscluster"
+1835108 -rwxr-xr-x 1 root  30K Sep 11  2012 "ntfsck"
+1835107 -rwxr-xr-x 1 root  26K Sep 11  2012 "ntfscat"
+1835106 -rwxr-xr-x 1 root  18K Sep 11  2012 "ntfs-3g.usermap"
+1835105 -rwxr-xr-x 1 root  66K Sep 11  2012 "ntfs-3g.secaudit"
+1835104 -rwxr-xr-x 1 root 9.4K Sep 11  2012 "ntfs-3g.probe"
+1835103 -rwxr-xr-x 1 root  58K Sep 11  2012 "ntfs-3g"
+1835102 -rwxr-xr-x 1 root  14K May 27  2011 "nisdomainname"
+1835101 -rwxr-xr-x 1 root 112K Mar 31  2012 "netstat"
+1835100 lrwxrwxrwx 1 root   24 Jun 16 16:27 "netcat" -> "/etc/alternatives/netcat"
+1835099 -rwxr-xr-x 1 root  26K Jul  2  2011 "nc.openbsd"
+1835098 lrwxrwxrwx 1 root   20 Jun 16 16:27 "nc" -> "/etc/alternatives/nc"
+1835097 -rwxr-xr-x 1 root 167K Dec  4  2010 "nano"
+1835096 -rwxr-xr-x 1 root 110K Nov 20  2012 "mv"
+1835095 -rwxr-xr-x 1 root  67K Apr  2  2012 "mt-gnu"
+1835094 lrwxrwxrwx 1 root   20 Jun 16 16:27 "mt" -> "/etc/alternatives/mt"
+1835093 -rwxr-xr-x 1 root 5.5K Jul 27  2012 "mountpoint"
+1835092 -rwsr-xr-x 1 root  87K Mar 30  2012 "mount"
+1835091 -rwxr-xr-x 1 root  34K Mar 30  2012 "more"
+1835090 -rwxr-xr-x 1 root  34K Nov 20  2012 "mktemp"
+1835089 -rwxr-xr-x 1 root  30K Nov 20  2012 "mknod"
+1835088 -rwxr-xr-x 1 root  42K Nov 20  2012 "mkdir"
+1835086 -rwxr-xr-x 1 root 5.5K Nov 21  2011 "lsmod"
+1835085 -rwxr-xr-x 1 root  43K Mar 30  2012 "lsblk"
+1835084 -rwxr-xr-x 1 root 103K Nov 20  2012 "ls"
+1835083 -rwxr-xr-x 1 root  62K Sep 11  2012 "lowntfs-3g"
+1835082 -rwxr-xr-x 1 root  43K Sep 13  2012 "login"
+1835080 -rwxr-xr-x 1 root  85K Apr  1  2012 "loadkeys"
+1835079 -rwxr-xr-x 1 root  46K Nov 20  2012 "ln"
+1835077 -rwxr-xr-x 1 root 7.4K Aug 11  2011 "lesspipe"
+1835076 -rwxr-xr-x 1 root  15K Aug 11  2011 "lesskey"
+1835075 lrwxrwxrwx 1 root    8 Jun 16 16:27 "lessfile" -> "lesspipe"
+1835074 -rwxr-xr-x 1 root 9.5K Aug 11  2011 "lessecho"
+1835073 -rwxr-xr-x 1 root 138K Aug 11  2011 "less"
+1835072 -rwxr-xr-x 1 root  18K Dec 13  2011 "kill"
+1835070 -rwxr-xr-x 1 root 9.5K Apr  1  2012 "kbd_mode"
+1835069 -rwxr-xr-x 1 root 249K Apr 10  2012 "ip"
+1835068 -rwxr-xr-x 1 root  16K Jan 19  2013 "initctl2dot"
+1835067 -rwxr-xr-x 1 root 5.8K Jan 19  2013 "init-checkconf"
+1835064 -rwxr-xr-x 1 root  14K May 27  2011 "hostname"
+1835063 -rwxr-xr-x 1 root  85K Feb  9  2012 "gzip"
+1835062 -rwxr-xr-x 1 root 5.8K Feb  9  2012 "gzexe"
+1835061 -rwxr-xr-x 1 root 2.2K Feb  9  2012 "gunzip"
+1835060 -rwxr-xr-x 1 root 151K Dec 17  2011 "grep"
+1835059 -rwxr-xr-x 1 root  22K Dec 18  2011 "getfacl"
+1835057 -rwsr-xr-x 1 root  26K Mar  2  2012 "fusermount"
+1835056 -rwxr-xr-x 1 root  31K Jul 17  2012 "fuser"
+1835055 -rwxr-xr-x 1 root  35K Mar 30  2012 "findmnt"
+1835054 -rwxr-xr-x 1 root 106K Dec 17  2011 "fgrep"
+1835053 -rwxr-xr-x 1 root 9.5K Apr  1  2012 "fgconsole"
+1835052 -rwxr-xr-x 1 root  22K Nov 20  2012 "false"
+1835051 -rwxr-xr-x 1 root 147K Dec 17  2011 "egrep"
+1835050 -rwxr-xr-x 1 root  42K Oct 17  2011 "ed"
+1835049 -rwxr-xr-x 1 root  26K Nov 20  2012 "echo"
+1835048 -rwxr-xr-x 1 root  57K Apr  1  2012 "dumpkeys"
+1835047 -rwxr-xr-x 1 root  14K May 27  2011 "domainname"
+1835046 -rwxr-xr-x 1 root  14K May 27  2011 "dnsdomainname"
+1835045 -rwxr-xr-x 1 root  22K Mar 30  2012 "dmesg"
+1835044 -rwxr-xr-x 1 root 103K Nov 20  2012 "dir"
+1835043 -rwxr-xr-x 1 root  78K Nov 20  2012 "df"
+1835041 -rwxr-xr-x 1 root  54K Nov 20  2012 "dd"
+1835040 -rwxr-xr-x 1 root 9.4K Jun 13  2013 "dbus-uuidgen"
+1835039 -rwxr-xr-x 1 root 430K Jun 13  2013 "dbus-daemon"
+1835038 -rwxr-xr-x 1 root 9.4K Jun 13  2013 "dbus-cleanup-sockets"
+1835037 -rwxr-xr-x 1 root  54K Nov 20  2012 "date"
+1835036 -rwxr-xr-x 1 root  98K Mar 30  2012 "dash"
+1835035 -rwxr-xr-x 1 root 136K Apr  2  2012 "cpio"
+1835034 -rwxr-xr-x 1 root 118K Nov 20  2012 "cp"
+1835033 -rwxr-xr-x 1 root 9.5K Apr  1  2012 "chvt"
+1835032 -rwxr-xr-x 1 root  54K Nov 20  2012 "chown"
+1835031 -rwxr-xr-x 1 root  50K Nov 20  2012 "chmod"
+1835030 -rwxr-xr-x 1 root  54K Nov 20  2012 "chgrp"
+1835028 -rwxr-xr-x 1 root  14K Dec 18  2011 "chacl"
+1835027 -rwxr-xr-x 1 root  46K Nov 20  2012 "cat"
+1835026 -rwxr-xr-x 1 root 1.3K Dec 15  2011 "bzmore"
+1835025 lrwxrwxrwx 1 root    6 Jun 16 16:27 "bzless" -> "bzmore"
+1835024 -rwxr-xr-x 1 root 9.4K Dec 15  2011 "bzip2recover"
+1835023 -rwxr-xr-x 1 root  30K Dec 15  2011 "bzip2"
+1835022 -rwxr-xr-x 1 root 3.6K Dec 15  2011 "bzgrep"
+1835021 lrwxrwxrwx 1 root    6 Jun 16 16:27 "bzfgrep" -> "bzgrep"
+1835020 -rwxr-xr-x 1 root 4.8K Dec 15  2011 "bzexe"
+1835019 lrwxrwxrwx 1 root    6 Jun 16 16:27 "bzegrep" -> "bzgrep"
+1835018 -rwxr-xr-x 1 root 2.1K Dec 15  2011 "bzdiff"
+1835017 lrwxrwxrwx 1 root    6 Jun 16 16:27 "bzcmp" -> "bzdiff"
+1835016 -rwxr-xr-x 1 root  30K Dec 15  2011 "bzcat"
+1835015 -rwxr-xr-x 1 root 1.6M Nov 17  2012 "busybox"
+1835014 -rwxr-xr-x 1 root  30K Dec 15  2011 "bunzip2"
+1835012 -rwxr-xr-x 1 root 900K Mar 29  2013 "bash"
+mysh > rm -f 1.out
+mysh > echo hello>1.out&
+mysh > wait
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+wait
+mysh > cat 1.out
+mysh > pwd
+/home/fangpin/Documents/c
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+wait
+cat 1.out
+pwd
+mysh > uname > 1.out
+mysh > /usr/bin/seq 2 2 8 > 1.out
+mysh > uname
+Linux
+mysh > wait
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+wait
+cat 1.out
+pwd
+uname  >  1.outout
+/usr/bin/seq 2 2 8  >  1.out--no-group
+uname
+wait
+mysh >  uname
+Linux
+mysh >   uname
+Linux
+mysh > /bin/ls  /bin/
+bash
+bunzip2
+busybox
+bzcat
+bzcmp
+bzdiff
+bzegrep
+bzexe
+bzfgrep
+bzgrep
+bzip2
+bzip2recover
+bzless
+bzmore
+cat
+chacl
+chgrp
+chmod
+chown
+chvt
+cp
+cpio
+dash
+date
+dbus-cleanup-sockets
+dbus-daemon
+dbus-uuidgen
+dd
+df
+dir
+dmesg
+dnsdomainname
+domainname
+dumpkeys
+echo
+ed
+egrep
+false
+fgconsole
+fgrep
+findmnt
+fuser
+fusermount
+getfacl
+grep
+gunzip
+gzexe
+gzip
+hostname
+init-checkconf
+initctl2dot
+ip
+kbd_mode
+kill
+less
+lessecho
+lessfile
+lesskey
+lesspipe
+ln
+loadkeys
+login
+lowntfs-3g
+ls
+lsblk
+lsmod
+mkdir
+mknod
+mktemp
+more
+mount
+mountpoint
+mt
+mt-gnu
+mv
+nano
+nc
+nc.openbsd
+netcat
+netstat
+nisdomainname
+ntfs-3g
+ntfs-3g.probe
+ntfs-3g.secaudit
+ntfs-3g.usermap
+ntfscat
+ntfsck
+ntfscluster
+ntfscmp
+ntfsdecrypt
+ntfsdump_logfile
+ntfsfix
+ntfsinfo
+ntfsls
+ntfsmftalloc
+ntfsmove
+ntfstruncate
+ntfswipe
+open
+openvt
+pidof
+ping
+ping6
+plymouth
+plymouth-upstart-bridge
+ps
+pwd
+rbash
+readlink
+rm
+rmdir
+rnano
+running-in-container
+run-parts
+sed
+setfacl
+setfont
+setupcon
+sh
+sh.distrib
+sleep
+ss
+static-sh
+stty
+su
+sync
+tailf
+tar
+tempfile
+touch
+true
+ulockmgr_server
+umount
+uname
+uncompress
+unicode_start
+vdir
+vmmouse_detect
+which
+whiptail
+ypdomainname
+zcat
+zcmp
+zdiff
+zegrep
+zfgrep
+zforce
+zgrep
+zless
+zmore
+znew
+mysh > /bin/ls   /bin/
+bash
+bunzip2
+busybox
+bzcat
+bzcmp
+bzdiff
+bzegrep
+bzexe
+bzfgrep
+bzgrep
+bzip2
+bzip2recover
+bzless
+bzmore
+cat
+chacl
+chgrp
+chmod
+chown
+chvt
+cp
+cpio
+dash
+date
+dbus-cleanup-sockets
+dbus-daemon
+dbus-uuidgen
+dd
+df
+dir
+dmesg
+dnsdomainname
+domainname
+dumpkeys
+echo
+ed
+egrep
+false
+fgconsole
+fgrep
+findmnt
+fuser
+fusermount
+getfacl
+grep
+gunzip
+gzexe
+gzip
+hostname
+init-checkconf
+initctl2dot
+ip
+kbd_mode
+kill
+less
+lessecho
+lessfile
+lesskey
+lesspipe
+ln
+loadkeys
+login
+lowntfs-3g
+ls
+lsblk
+lsmod
+mkdir
+mknod
+mktemp
+more
+mount
+mountpoint
+mt
+mt-gnu
+mv
+nano
+nc
+nc.openbsd
+netcat
+netstat
+nisdomainname
+ntfs-3g
+ntfs-3g.probe
+ntfs-3g.secaudit
+ntfs-3g.usermap
+ntfscat
+ntfsck
+ntfscluster
+ntfscmp
+ntfsdecrypt
+ntfsdump_logfile
+ntfsfix
+ntfsinfo
+ntfsls
+ntfsmftalloc
+ntfsmove
+ntfstruncate
+ntfswipe
+open
+openvt
+pidof
+ping
+ping6
+plymouth
+plymouth-upstart-bridge
+ps
+pwd
+rbash
+readlink
+rm
+rmdir
+rnano
+running-in-container
+run-parts
+sed
+setfacl
+setfont
+setupcon
+sh
+sh.distrib
+sleep
+ss
+static-sh
+stty
+su
+sync
+tailf
+tar
+tempfile
+touch
+true
+ulockmgr_server
+umount
+uname
+uncompress
+unicode_start
+vdir
+vmmouse_detect
+which
+whiptail
+ypdomainname
+zcat
+zcmp
+zdiff
+zegrep
+zfgrep
+zforce
+zgrep
+zless
+zmore
+znew
+mysh > /usr/bin/which cp 
+/bin/cp
+mysh > /usr/bin/which cp  
+/bin/cp
+mysh >  cd   /bin
+mysh >    pwd  
+/bin
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+wait
+cat 1.out
+pwd
+uname  >  1.outout
+/usr/bin/seq 2 2 8  >  1.out--no-group
+uname
+wait
+ uname
+  uname
+/bin/ls  /bin/
+/bin/ls   /bin/
+/usr/bin/which cp 
+/usr/bin/which cp  
+ cd   /bin
+   pwd  
+mysh >   cd
+mysh >     exit    
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+wait
+cat 1.out
+pwd
+uname  >  1.outout
+/usr/bin/seq 2 2 8  >  1.out--no-group
+uname
+wait
+ uname
+  uname
+/bin/ls  /bin/
+/bin/ls   /bin/
+/usr/bin/which cp 
+/usr/bin/which cp  
+ cd   /bin
+   pwd  
+  cd
+    exit    
+mysh > pwd
+/home/fangpin/Documents/c
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+pwd
+true  & 
+/bin/uname  >  1.out  & 
+wait
+/bin/uname  >  1.out  & 
+wait
+/bin/echo now
+wait
+/bin/echo later
+cd /bogus
+exit foo
+/bogus
+pwd /u
+/bin/ls  >  /bogusut
+/bin/ls  >  1.out 2.out
+uname
+uname
+/bin/echo
+/bin/uname
+/bin/ls /bin/
+/bin/ls -l --human-readable --no-group -i -p -Q --reverse /bin/
+rm -f 1.out
+echo hello > 1.out & adable
+pwd

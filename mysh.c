@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
-const int MAXN=1000;
+#define MAXN 1000
 char* homePath,curPath[MAXN];
 char *newline="\n";
 char error_message[30] = "An error has occurred\n";
