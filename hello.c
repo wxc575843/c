@@ -3,8 +3,9 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <sys/types.h>
 
-#define pagesize (getpagesize();)
+#define PAGESIZE (getpagesize())
 #define E_NO_SPACE            1
 #define E_CORRUPT_FREESPACE   2
 #define E_PADDING_OVERWRITTEN 3
@@ -40,9 +41,13 @@ int mem_init(int size_of_region){
 	}
 	// open the /dev/zero device
 	int fd = open("/dev/zero", O_RDWR);
+	if(fd==-1)
+		write(STDERR_FILENO,"open error\n",20);
+	printf("%d\n",fd);
 	// // size_of_region (in bytes) needs to be evenly divisible by the page size
-	ptr=(void *)mmap(NULL, size_of_region, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
-	printf("%p\n",MAP_FAILED);
+	ptr=mmap(NULL, size_of_region, PROT_READ | PROT_WRITE, MAP_PRIVATE|MAP_FIXED , -1, 0);
+	printf("%p\n",(void*)MAP_FAILED);
+	printf("%p\n",(char*)ptr);
 	if (ptr == MAP_FAILED){
 		perror("mmap");
 		exit(1);
@@ -59,6 +64,7 @@ int mem_init(int size_of_region){
 
 int main()
 {
-    mem_init(4096);
+	printf("pagesize :%d\n",PAGESIZE);
+    mem_init(PAGESIZE);
     return 0;
 }
