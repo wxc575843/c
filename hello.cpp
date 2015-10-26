@@ -1,6 +1,8 @@
-struct Node{
-	int x;
-};
-bool operator<(const Node& a,const Node &b){
-	return a.x>b.x;
+#include <iostream>
+using namespace std;
+
+int main(){
+	int n;
+	cin>>n;
+	cout<<n<<endl;
 }
