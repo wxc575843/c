@@ -15,8 +15,8 @@ typedef struct __header_t {
 typedef struct __node_t{
 	int size;
 	struct __node_t *next;
-}node_t;
-void *head;
+}node_t,*head;
+void *ptr;
 
 int mem_init(int size_of_region){
 	static int call_times=0;
@@ -28,15 +28,15 @@ int mem_init(int size_of_region){
 	// open the /dev/zero device
 	int fd = open("/dev/zero", O_RDWR);
 	// size_of_region (in bytes) needs to be evenly divisible by the page size
-	head=mmap(NULL, size_of_region, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+	ptr=mmap(NULL, size_of_region, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 	// free_head=mmap(NULL, PAGESIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
-	if (head== MAP_FAILED){
+	if (ptr== MAP_FAILED){
 		perror("mmap");
 		exit(1);
 	}
 	// close the device (don't worry, mapping should be unaffected)
 	close(fd);
-	head=(node_t*)head;
+	head=(node_t*)ptr;
 	head->size=4096 - sizeof(node_t);
 // head->next   = NULL;
 	return 0;
