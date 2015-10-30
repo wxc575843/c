@@ -69,7 +69,7 @@ int main()
 	int fd;
 	if((fd=open("/users/fangpin/Documents/programs/c/test.txt",O_RDWR))==-1)
 		perror("mmap");
-	void *ptr=mmap(NULL,getpagesize()*8,PROT_READ|PROT_WRITE,MAP_PRIVATE,fd,0);
+	void *ptr=mmap(NULL,getpagesize()*8,PROT_READ|PROT_WRITE,MAP_PRIVATE|MAP_ANONYMOUS,-1,0);
 	if(ptr==MAP_FAILED){
 		perror("map\n");
 		exit(1);

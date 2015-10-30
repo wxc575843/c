@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <ctime>
 using namespace std;
-const int TARGET=999;
+const int TARGET=499;
 const double MAXNLEN=1E30;
 
 struct Point{
