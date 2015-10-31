@@ -49,23 +49,73 @@ void * mem_alloc(int size, int style){
 	header_t *header;
 	// 直接前驱
 	node_t* free_list_prev=free_head;
+	// 最佳适应分区的直接前驱节点
+	node_t* free_list_BF_prev=free_head;
+	node_t* free_list_WF_prev=free_head;
 	// 加上头部结构和端口对齐
 	int final_size=size+sizeof(header_t);
 	final_size=(final_size%8)?final_size/8*8+8:final_size;
 	switch(style){
 		case M_BESTFIT:
 			while(free_list!=NULL){
-				if(free_list->size>=final_size && (BF==NULL || BF->size>free_list->size))
+				if(free_list->size>=final_size && (BF==NULL || BF->size>free_list->size)){
 					BF=free_list;
-				else free_list=free_list->next;
+					free_list_BF_prev=free_list_prev;
+				}
+				else{
+					free_list=free_list->next;
+					free_list_prev=free_list;
+				}
 			}
 			if(BF==free_head){
+				(free_head+final_size)->size=free_head->size;
+				(free_head+final_size)->next=free_head->next;
 				free_head+=final_size;
-				free_head->size-=final_size;
 			}
+			else if(BF!=NULL){
+				(BF+final_size)->size=BF->size;
+				(BF+final_size)->next=BF->next;
+				free_list_BF_prev->next=BF+final_size;
+			}
+			// 没有足够空间分配内存
+			else{
+				m_error=E_NO_SPACE;
+				break;
+			}
+			header=(header_t*)BF;
+			header->size=final_size;
+			header->magic=12345678;
+			return (void*)(header+sizeof(header_t));
 			break;
 		case M_WORSTFIT:
-
+			while(free_list!=NULL){
+				if(free_list->size>=final_size && (WF==NULL || free_list->size>WF->size)){
+					WF=free_list;
+					free_list_WF_prev=free_list_prev;
+				}
+				else{
+					free_list=free_list->next;
+					free_list_prev=free_list;
+				}
+			}
+			if(WF==free_head){
+				(free_head+final_size)->size=free_head->size-final_size;
+				(free_head+final_size)->next=free_head->next;
+				free_head+=final_size;
+			}
+			else if(WF!=NULL){
+				(WF+final_size)->size=WF->size-final_size;
+				(WF+final_size)->next=WF->next;
+				free_list_WF_prev->next=WF+final_size;
+			}
+			else{
+				m_error=E_NO_SPACE;
+				break;
+			}
+			header=(header_t*)WF;
+			header->size=final_size;
+			header->magic=12345678;
+			return (void*)(header+sizeof(header_t));
 			break;
 
 		case M_FIRSTFIT:
